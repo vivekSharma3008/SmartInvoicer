@@ -1,1 +1,3 @@
-# SmartInvoicer
+Technologies Used: 
+React,
+Material-UI
