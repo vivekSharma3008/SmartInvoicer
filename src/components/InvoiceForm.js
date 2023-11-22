@@ -219,6 +219,31 @@ function InvoiceForm({ handleAddInvoice }) {
           color="primary"
           type="submit"
           sx={{
+            backgroundColor: Object.keys(formData).some(
+              (field) => formData[field] < (fieldValidation[field]?.min || 0)
+            )
+              ? "lightgray" // Change color for invalid form
+              : "green", // Default color for valid form
+            color: "white",
+            borderRadius: "12px",
+            padding: "10px 20px",
+            "&:hover": {
+              backgroundColor: Object.keys(formData).some(
+                (field) => formData[field] < (fieldValidation[field]?.min || 0)
+              )
+                ? "lightgray" // Change hover color for invalid form
+                : "darkgreen", // Default hover color for valid form
+            },
+          }}
+        >
+          Add Invoice
+        </Button>
+
+        {/* <Button
+          variant="contained"
+          color="primary"
+          type="submit"
+          sx={{
             backgroundColor: "green",
             color: "white",
             borderRadius: "12px",
@@ -229,7 +254,7 @@ function InvoiceForm({ handleAddInvoice }) {
           }}
         >
           Add Invoice
-        </Button>
+        </Button> */}
       </Box>
     </form>
   );

@@ -313,9 +313,11 @@ function InvoiceGrid({ invoices, setInvoices }) {
                 </TableCell>
                 <TableCell>
                   {
-                    <IconButton onClick={() => handleDelete(index)}>
-                      <DeleteIcon />{" "}
-                      {/* Replace with your Material-UI delete icon */}
+                    <IconButton
+                      onClick={() => handleDelete(index)}
+                      sx={{ color: "red" }}
+                    >
+                      <DeleteIcon />
                     </IconButton>
                   }
                 </TableCell>
