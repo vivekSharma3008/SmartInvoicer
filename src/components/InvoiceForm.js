@@ -238,23 +238,6 @@ function InvoiceForm({ handleAddInvoice }) {
         >
           Add Invoice
         </Button>
-
-        {/* <Button
-          variant="contained"
-          color="primary"
-          type="submit"
-          sx={{
-            backgroundColor: "green",
-            color: "white",
-            borderRadius: "12px",
-            padding: "10px 20px",
-            "&:hover": {
-              backgroundColor: "darkgreen",
-            },
-          }}
-        >
-          Add Invoice
-        </Button> */}
       </Box>
     </form>
   );
