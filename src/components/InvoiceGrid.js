@@ -11,6 +11,7 @@ import {
   IconButton,
 } from "@mui/material";
 import { Edit, Save } from "@mui/icons-material";
+import { Delete as DeleteIcon } from "@mui/icons-material";
 import { Snackbar } from "@mui/material";
 import Alert from "@mui/material/Alert";
 const styles = {
@@ -70,6 +71,15 @@ function InvoiceGrid({ invoices, setInvoices }) {
     setState((prevState) => ({
       ...prevState,
       editingIndex: -1,
+      SnackbarFlag: false,
+    }));
+  };
+  const handleDelete = (index) => {
+    const updatedInvoices = state.gridData.filter((_, i) => i !== index);
+    setInvoices(updatedInvoices);
+    setState((prevState) => ({
+      ...prevState,
+      gridData: updatedInvoices,
       SnackbarFlag: false,
     }));
   };
@@ -190,6 +200,7 @@ function InvoiceGrid({ invoices, setInvoices }) {
               <TableCell>Tax</TableCell>
               <TableCell>Total Price</TableCell>
               <TableCell>Edit</TableCell>
+              <TableCell>Delete</TableCell>
             </TableRow>
           </TableHead>
           <TableBody>
@@ -299,6 +310,14 @@ function InvoiceGrid({ invoices, setInvoices }) {
                       <Edit />
                     </IconButton>
                   )}
+                </TableCell>
+                <TableCell>
+                  {
+                    <IconButton onClick={() => handleDelete(index)}>
+                      <DeleteIcon />{" "}
+                      {/* Replace with your Material-UI delete icon */}
+                    </IconButton>
+                  }
                 </TableCell>
               </TableRow>
             ))}

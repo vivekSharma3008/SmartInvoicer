@@ -4,8 +4,8 @@ import { useState } from "react";
 
 function InvoiceForm({ handleAddInvoice }) {
   const [formData, setFormData] = useState({
-    qty: 1,
-    price: 0.1,
+    qty: 0,
+    price: 0,
     discountPercentage: 0,
     discount: 0,
     taxPercentage: 0,
@@ -125,8 +125,8 @@ function InvoiceForm({ handleAddInvoice }) {
 
     handleAddInvoice(formData);
     setFormData({
-      qty: 1,
-      price: 0.1,
+      qty: 0,
+      price: 0,
       discountPercentage: 0,
       discount: 0,
       taxPercentage: 0,
