@@ -14,6 +14,7 @@ import { Edit, Save } from "@mui/icons-material";
 import { Delete as DeleteIcon } from "@mui/icons-material";
 import { Snackbar } from "@mui/material";
 import Alert from "@mui/material/Alert";
+import { isFormValid } from "../helpers/helper";
 const styles = {
   textField: {
     width: "auto",
@@ -27,15 +28,11 @@ const styles = {
   },
 };
 
-function InvoiceGrid({ invoices, setInvoices }) {
-  const isFormValid = (data) => {
-    const { qty, price, discount, tax, discountPercentage, taxPercentage } =
-      data;
-    if (qty <= 0 || price <= 0 || discount < 0 || tax < 0) return false;
-    if (discount > qty * price) return false;
-    if (discountPercentage > 100 || taxPercentage > 100) return false;
-    return true;
-  };
+function InvoiceGrid({ invoices, setInvoices, fields }) {
+  const columns = [
+    { name: "Index", accessor: (_, index) => index + 1 },
+    ...fields,
+  ];
 
   const [state, setState] = useState({
     editingIndex: -1,
@@ -86,147 +83,36 @@ function InvoiceGrid({ invoices, setInvoices }) {
 
   const handleChange = (index, field, value) => {
     let newGridData = [...state.gridData];
+    newGridData[index] = { ...newGridData[index], [field]: value };
 
-    if (field === "discountPercentage" || field === "taxPercentage") {
-      value = Math.min(100, value);
-    }
-    newGridData[index] = { ...state.gridData[index], [field]: value };
+    const amount =
+      parseFloat(newGridData[index].price) * parseFloat(newGridData[index].qty);
 
-    if (field === "qty" || field === "price") {
-      const discount = parseFloat(
-        (
-          (newGridData[index].discountPercentage / 100) *
-          newGridData[index].qty *
-          newGridData[index].price
-        ).toFixed(2)
-      );
-      const tax = parseFloat(
-        (
-          (newGridData[index].taxPercentage / 100) *
-          (newGridData[index].qty * newGridData[index].price - discount)
-        ).toFixed(2)
-      );
-      newGridData[index] = {
-        ...newGridData[index],
-        discount,
-        tax,
-        totalPrice:
-          newGridData[index].price * newGridData[index].qty - discount + tax,
-      };
-    } else if (field === "discount") {
-      const discountPercentage = parseFloat(
-        (
-          (value / (newGridData[index].qty * newGridData[index].price)) *
-          100
-        ).toFixed(2)
-      );
-      newGridData[index] = {
-        ...newGridData[index],
-        discount: value,
-        discountPercentage,
-        totalPrice:
-          newGridData[index].price * newGridData[index].qty -
-          value +
-          newGridData[index].tax,
-      };
-    } else if (field === "discountPercentage") {
-      const discount = parseFloat(
-        (
-          (value / 100) *
-          newGridData[index].qty *
-          newGridData[index].price
-        ).toFixed(2)
-      );
-      newGridData[index] = {
-        ...newGridData[index],
-        discount,
-        discountPercentage: value,
-        totalPrice:
-          newGridData[index].price * newGridData[index].qty -
-          discount +
-          newGridData[index].tax,
-      };
-    } else if (field === "tax") {
-      const taxPercentage = parseFloat(
-        (
-          (value /
-            (newGridData[index].qty * newGridData[index].price -
-              newGridData[index].discount)) *
-          100
-        ).toFixed(2)
-      );
-      newGridData[index] = {
-        ...newGridData[index],
-        tax: value,
-        taxPercentage,
-        totalPrice:
-          newGridData[index].price * newGridData[index].qty -
-          newGridData[index].discount +
-          value,
-      };
-    } else if (field === "taxPercentage") {
-      const tax = parseFloat(
-        (
-          (value / 100) *
-          (newGridData[index].qty * newGridData[index].price -
-            newGridData[index].discount)
-        ).toFixed(2)
-      );
-      newGridData[index] = {
-        ...newGridData[index],
-        tax,
-        taxPercentage: value,
-        totalPrice:
-          newGridData[index].price * newGridData[index].qty -
-          newGridData[index].discount +
-          tax,
-      };
-    }
+    const newDiscount = (
+      (amount * parseFloat(newGridData[index].discountPercentage)) /
+      100
+    ).toFixed(2);
+
+    const newTax = (
+      (amount * parseFloat(newGridData[index].taxPercentage)) /
+      100
+    ).toFixed(2);
+
+    const newTotalPrice = (
+      amount -
+      parseFloat(newDiscount) +
+      parseFloat(newTax)
+    ).toFixed(2);
+
+    newGridData[index] = {
+      ...newGridData[index],
+      discount: newDiscount,
+      tax: newTax,
+      totalPrice: newTotalPrice,
+    };
 
     setState((prevState) => ({ ...prevState, gridData: newGridData }));
   };
-
-  const columns = [
-    {
-      name: "Index",
-      accessor: (_, index) => index + 1,
-    },
-    {
-      name: "Qty",
-      accessor: "qty",
-      editable: true,
-    },
-    {
-      name: "Price",
-      accessor: "price",
-      editable: true,
-    },
-    {
-      name: "Discount %",
-      accessor: "discountPercentage",
-      editable: true,
-    },
-    {
-      name: "Discount",
-      accessor: "discount",
-      editable: true,
-    },
-    {
-      name: "Tax %",
-      accessor: "taxPercentage",
-      editable: true,
-    },
-    {
-      name: "Tax",
-      accessor: "tax",
-      editable: true,
-    },
-    {
-      name: "Total Price",
-      accessor: "totalPrice",
-      editable: true,
-    },
-  ];
 
   const renderTableHead = () => (
     <TableHead sx={{ backgroundColor: "#f0f0f0" }}>
